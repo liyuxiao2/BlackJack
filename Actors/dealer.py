@@ -1,4 +1,3 @@
-import pygame
 from .cards import Card
 
 class Dealer():
@@ -6,20 +5,31 @@ class Dealer():
         self.is_draw = is_draw
         self.count = count
         
-        
+    #checks if the first two cards equal to 21    
     def check_black_jack(self, card1, card2):
         if ((card1.get_value() + card2.get_value()) == 21):
             return True
     
+    #adds to the count of the hand every time a new card is added
     def add_count(self, value):
         return (self.count + value)
     
+    #checks if the count is over 21
+    def check_bust(self):
+        if self.count > 21:
+            return True
+        return False
     
-    def draw_card(self, screen, card, x, y):
-        print(f"Drawing card: {card}, type: {type(card)}")
-        if isinstance(card, Card):
-            print(f"Card value: {card.get_value()}")
-            screen.blit(card.image, (x, y))
-            self.add_count(card.get_value())
-        else:
-            print("Error: The object is not a Card instance.")
+    
+    #draws an additional card into the hand
+    def draw_card(self, screen, card, x_location, y_location):
+        #check if still needing to draw
+        if(self.is_draw):
+            print(f"Drawing card: {card}, type: {type(card)}")
+            #have to check whether the objects we are dealing with are from the card class
+            if isinstance(card, Card):
+                print(f"Card value: {card.get_value()}")
+                screen.blit(card.image, (x_location, y_location))
+                self.add_count(card.get_value())
+            else:
+                print("Error: The object is not a Card instance.")

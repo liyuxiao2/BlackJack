@@ -11,28 +11,41 @@ class Player(Dealer):
     def __init__(self, balance, is_draw, count):
         super().__init__(is_draw, count)
         self.balance = balance
+        self.bet = 0
         
     def stand(self):
         #stand aka do not take any more cards
-        return None
+        self.is_draw = False
     
     def double(self):
         return None
     
     def split(self, card1, card2):
-        if (card1.get_card_type == card2.get_card_type):
-            return True
+        if(isinstance(card1,Card) and isinstance(card2, Card)):
+            if (card1.get_card_type == card2.get_card_type):
+                return True
+    
+    #sets the bet for the player
+    def set_bet(self, amount_to_bet):
+        #check if you have enough in the balance to bet
+        if(self.get_balance() - amount_to_bet > 0):
+            self.bet += amount_to_bet
     
     
+    #returns current balance
     def get_balance(self):
         return self.balance
     
+    #adds to the balance after a win
     def add_balance(self, amount):
         return self.balance + amount
     
+    #subtracts balance after a loss
     def subtract_balance(self, amount):
         return self.balance - amount
     
+    
+    #check if your balance is 0
     def check_game_over(self):
         if self.get_balance() == 0:
             return True
