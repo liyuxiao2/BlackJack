@@ -1,5 +1,5 @@
 from .cards import Card
-
+import time
 class Dealer():
     def __init__(self, is_draw, count):
         self.is_draw = is_draw
@@ -14,12 +14,19 @@ class Dealer():
     def add_count(self, value):
         return (self.count + value)
     
+    def get_count(self):
+        return self.count
+    
     #checks if the count is over 21
     def check_bust(self):
         if self.count > 21:
             return True
         return False
     
+    def check_below_17(self):
+        if(self.count < 17):
+            return True
+        return False
     
     #draws an additional card into the hand
     def draw_card(self, screen, card, x_location, y_location):
@@ -28,6 +35,7 @@ class Dealer():
             print(f"Drawing card: {card}, type: {type(card)}")
             #have to check whether the objects we are dealing with are from the card class
             if isinstance(card, Card):
+                time.sleep(0.5)
                 print(f"Card value: {card.get_value()}")
                 screen.blit(card.image, (x_location, y_location))
                 self.add_count(card.get_value())

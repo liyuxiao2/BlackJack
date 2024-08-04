@@ -12,7 +12,8 @@ class Card(pygame.sprite.Sprite):
         self.points = points
         self.is_face_up = True
         
-        
+    def get_card_type(self):
+        return self.card_type    
     #returns card value 
     def get_value(self):
         return self.points

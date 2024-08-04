@@ -5,9 +5,7 @@ from Actors.cards import Card  # Ensure this import is correct
 from Actors.button import Button
 from Actors.player import Player
 from Actors.dealer import Dealer
-
-import random
-import time
+from Actors.functions.shuffle_deck import shuffle_deck
 
 
 # Initialize Pygame
@@ -17,7 +15,7 @@ pygame.init()
 screen_width = 800
 screen_height = 600
 
-bg = "/Users/liyuxiao/Documents/CS/BlackJack/Assets/board.png"
+bg = "/Users/liyuxiao/Documents/CS/BlackJack/src/Assets/board.png"
 screen = pygame.display.set_mode((screen_width, screen_height))
 
 set_screen_to_image(screen, bg)
@@ -29,26 +27,9 @@ pygame.display.set_caption("BlackJack")
 # Update the display
 pygame.display.flip()
 
-# Load card images
-card_image_deck = load_images("/Users/liyuxiao/Documents/CS/BlackJack/Assets/poker_cards/tile", 52, 60, 92)
+#make the card_deck 
+card_deck = shuffle_deck()
 
-
-#load all the card objects
-card_possibilities = ["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"]
-card_deck = []
-point_counter = 1
-
-for i in range(51):
-    # Create a card object for each image in the deck
-    card_deck.append(Card(width=71, height=96, location_x=200, location_y=200,
-                          image=card_image_deck[i], points=point_counter % 13 + 1,  # Calculate points
-                          face_down_image = card_image_deck[51], card_type = card_possibilities[point_counter%13]))  # Use a separate face-down image
-    point_counter += 1  # Increment point counter for each card (adjust if needed)
-
-random.shuffle(card_deck)
-
-
-print(card_deck[0].get_value()) 
 
 #the buttons for the blackjack game
 box_size = 75
@@ -86,15 +67,47 @@ while running:
         
         
         if(clickTrue):
+            #check if the deck is empty
+            if(len(card_deck) == 0):
+                card_deck = shuffle_deck()
+                
             if i == 0:
-                player.draw_card(screen, card_deck.pop(0), 300, 300 )
+                drawn_card = card_deck.pop(0)
+                player_hand.append(drawn_card)
+                player.draw_card(screen, drawn_card, 300, 300+ len(player_hand)*100)
+                #checks if player busted
+                if(player.check_bust()):
+                    #change val later
+                    player.subtract_balance(500)
+                    player_hand, dealer_hand = [], []
             elif i == 1:
                 player.stand()
+                while(dealer.check_below_17()):
+                    drawn_card = card_deck.pop(0)
+                    player_hand.append(drawn_card)
+                    dealer.draw_card(screen,drawn_card, 300, 100+len(dealer_hand*10))
+                if(dealer.check_bust()):
+                    #if player wins, will change value later
+                    player.add_balance(500)
+                    player_hand, dealer_hand = [], []
+                elif(dealer.get_count > player.get_count):
+                    player.subtract_balance(500)
+                    player_hand, dealer_hand = [], []
             elif i == 2:
-                player.draw_card(screen, card_deck.pop(0), 300, 300)
-            else:
-                player.split(card_deck[0], card_deck[0])
+                #double button
+                player.set_bet(500)
+                drawn_card = card_deck.pop(0)
+                player_hand.append(drawn_card)
+                player.draw_card(screen, drawn_card, 300, 300)
                 
+                if(player.check_bust):
+                    #change val later
+                    player.subtract_balance(500)
+                    player_hand, dealer_hand = [], []
+            else:
+                if(player.split(card_deck[0], card_deck[0])):
+                    player.set_bet(500)
+             
                 
             
             
