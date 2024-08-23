@@ -13,9 +13,6 @@ class Player(Dealer):
         self.balance = balance
         self.bet = 0
         
-    def stand(self):
-        #stand aka do not take any more cards
-        self.is_draw = False
     
     def double(self):
         return None
@@ -32,10 +29,6 @@ class Player(Dealer):
             self.bet += amount_to_bet
     
     
-    #returns current balance
-    def get_balance(self):
-        return self.balance
-    
     #adds to the balance after a win
     def add_balance(self, amount):
         return self.balance + amount
@@ -47,7 +40,7 @@ class Player(Dealer):
     
     #check if your balance is 0
     def check_game_over(self):
-        if self.get_balance() == 0:
+        if self.balance == 0:
             return True
         return False
     

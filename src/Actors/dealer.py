@@ -12,7 +12,7 @@ class Dealer():
     
     #adds to the count of the hand every time a new card is added
     def add_count(self, value):
-        return (self.count + value)
+        self.count += value
     
     def get_count(self):
         return self.count
@@ -28,6 +28,9 @@ class Dealer():
             return True
         return False
     
+    def reset_count(self):
+        self.count = 0
+    
     #draws an additional card into the hand
     def draw_card(self, screen, card, x_location, y_location):
         #check if still needing to draw
@@ -38,6 +41,6 @@ class Dealer():
                 time.sleep(0.5)
                 print(f"Card value: {card.get_value()}")
                 screen.blit(card.image, (x_location, y_location))
-                self.add_count(card.get_value())
+                print("total: " + str(self.count))
             else:
                 print("Error: The object is not a Card instance.")
