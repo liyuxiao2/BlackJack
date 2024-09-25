@@ -4,6 +4,7 @@ class Dealer():
     def __init__(self, is_draw, count):
         self.is_draw = is_draw
         self.count = count
+        self.ace_count = 0
         
     #checks if the first two cards equal to 21    
     def check_black_jack(self, card1, card2):
@@ -19,28 +20,23 @@ class Dealer():
     
     #checks if the count is over 21
     def check_bust(self):
-        if self.count > 21:
-            return True
-        return False
+        return self.count > 21
     
     def check_below_17(self):
-        if(self.count < 17):
-            return True
-        return False
+        return self.count < 17
     
     def reset_count(self):
         self.count = 0
+        
+    def get_ace_count(self):
+        return self.ace_count
     
-    #draws an additional card into the hand
-    def draw_card(self, screen, card, x_location, y_location):
-        #check if still needing to draw
-        if(self.is_draw):
-            print(f"Drawing card: {card}, type: {type(card)}")
-            #have to check whether the objects we are dealing with are from the card class
-            if isinstance(card, Card):
-                time.sleep(0.5)
-                print(f"Card value: {card.get_value()}")
-                screen.blit(card.image, (x_location, y_location))
-                print("total: " + str(self.count))
-            else:
-                print("Error: The object is not a Card instance.")
+    def increment_ace_count(self):
+        self.ace_count += 1
+    
+    def adjust_for_ace(self):
+        while self.get_ace_count() > 1:
+            self.add_count(-10)
+        return self.count
+    
+    

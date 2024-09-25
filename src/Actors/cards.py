@@ -5,7 +5,8 @@ class Card(pygame.sprite.Sprite):
         super().__init__()
         # Directly use the provided image
         self.original_image = pygame.transform.scale(image, (width, height))
-        self.face_down_image = pygame.transform.scale(face_down_image, (width, height))
+        self.original_face_down_image = pygame.transform.scale(face_down_image, (width, height))
+        self.face_down_image = self.original_face_down_image
         self.image = self.original_image
         self.rect = self.image.get_rect(center=(location_x, location_y))
         self.card_type = card_type
@@ -25,6 +26,7 @@ class Card(pygame.sprite.Sprite):
     def show_face_down(self):
         self.image = self.face_down_image
         self.is_face_up = False
+        return self.image
         
     # Shows card face up
     def show_face_up(self):

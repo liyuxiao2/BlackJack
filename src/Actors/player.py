@@ -25,8 +25,10 @@ class Player(Dealer):
     #sets the bet for the player
     def set_bet(self, amount_to_bet):
         #check if you have enough in the balance to bet
-        if(self.get_balance() - amount_to_bet > 0):
+        if(self.balance - amount_to_bet > 0):
+            self.subtract_balance(amount_to_bet)
             self.bet += amount_to_bet
+        
     
     
     #adds to the balance after a win

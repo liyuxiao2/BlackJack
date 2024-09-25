@@ -5,7 +5,7 @@ import random
 def shuffle_deck():
     
     # Load card images
-    card_image_deck = load_images("/Users/liyuxiao/Documents/CS/BlackJack/src/Assets/poker_cards/tile", 52, 60, 92)
+    card_image_deck = load_images("/Users/liyuxiao/Documents/CS/SideProjects/BlackJack/src/Assets/poker_cards/tile", 53, 60, 92)
 
 
     # Load all the card objects
@@ -29,7 +29,7 @@ def shuffle_deck():
             location_y=200,
             image=card_image_deck[i], 
             points=points,  # Set points based on the card type
-            face_down_image=card_image_deck[51], 
+            face_down_image=card_image_deck[52], 
             card_type=card_possibilities[i % 13]  # Assign card type based on the index
         ))
 
