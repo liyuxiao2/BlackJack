@@ -11,11 +11,14 @@ class Player(Dealer):
     def __init__(self, balance, is_draw, count):
         super().__init__(is_draw, count)
         self.balance = balance
-        self.bet = 0
+        self.bet = 100              
         
+    def get_balance(self):
+        return self.balance
+    
     
     def double(self):
-        return None
+        self.set_bet(self.get_bet()*2)
     
     def split(self, card1, card2):
         if(isinstance(card1,Card) and isinstance(card2, Card)):
@@ -25,19 +28,27 @@ class Player(Dealer):
     #sets the bet for the player
     def set_bet(self, amount_to_bet):
         #check if you have enough in the balance to bet
-        if(self.balance - amount_to_bet > 0):
-            self.subtract_balance(amount_to_bet)
-            self.bet += amount_to_bet
+        self.bet = amount_to_bet
+    
+    
+    def check_bet_size(self, amount_to_bet):
+        if(self.balance - amount_to_bet >= 0):
+            return(True)
+        else:
+            return (False)
+
+    
+    def get_bet(self):
+        return self.bet
         
     
-    
     #adds to the balance after a win
-    def add_balance(self, amount):
-        return self.balance + amount
+    def add_balance(self):
+        self.balance += self.bet
     
     #subtracts balance after a loss
-    def subtract_balance(self, amount):
-        return self.balance - amount
+    def subtract_balance(self):
+        self.balance -= self.bet
     
     
     #check if your balance is 0

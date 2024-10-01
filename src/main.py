@@ -37,12 +37,18 @@ box_size = 75
 draw_button = Button("hit", box_size, box_size, 150, 100, "comicsans", (255, 255, 255), (0, 0, 0), (100, 100, 100))
 stand_button = Button("stand", box_size, box_size, 150, 200, "comicsans", (255, 255, 255), (0, 0, 0), (100, 100, 100))
 double_button = Button("double", box_size, box_size, 150, 300, "comicsans", (255, 255, 255), (0, 0, 0), (100, 100, 100))
+increase_bet_button = Button("raise 100", box_size+50, box_size, 100, 400, "comicsans", (255, 255, 255), (0, 0, 0), (100, 100, 100))
+decrease_bet_button = Button("lower 100", box_size+50, box_size, 250, 400, "comicsans", (255, 255, 255), (0, 0, 0), (100, 100, 100))
 
-button_group = [draw_button, stand_button, double_button]
-
+button_group = [draw_button, stand_button, double_button, increase_bet_button, decrease_bet_button]
+ 
 # Initialize player and dealer
 player = Player(2500, True, 0)
 dealer = Dealer(True, 0)
+
+bet_size = 100
+
+
 
 # List of player and dealer's hand, purely for displaying the cards on screen
 player_hand = []
@@ -82,10 +88,14 @@ def reset_board():
 
 def render_count():
     """Render player and dealer counts."""
+    player_balance_label = game_font.render("Balance: " + str(player.get_balance()), True, (255,255,255))
+    bet_label = game_font.render("Bet size: " + str(player.get_bet()), True, (255,255,255))
     player_count_label = game_font.render("Player: " + str(player.get_count()), True, (255, 255, 255))
     dealer_count_label = game_font.render("Dealer: " + str(dealer.get_count()), True, (255, 255, 255))
     screen.blit(player_count_label, (600, 300))
     screen.blit(dealer_count_label, (600, 100))
+    screen.blit(player_balance_label, (0,0))
+    screen.blit(bet_label, (550, 0))    
 
 def render_text(text):
     """Render text on the screen."""
@@ -137,6 +147,7 @@ def show_hidden_card():
     
     
 def play(button, hand_over, card_deck):
+    global bet_size
     # Handle button clicks
     if len(card_deck) == 0:
         card_deck = shuffle_deck()
@@ -149,7 +160,7 @@ def play(button, hand_over, card_deck):
 
         # Check if player busted
         if player.check_bust():
-            player.subtract_balance(500)
+            player.subtract_balance()
             render_text("Player busts, you lose!")
             hand_over = True
 
@@ -168,10 +179,11 @@ def play(button, hand_over, card_deck):
 
         # Dealer's hand is now fully revealed
         if dealer.check_bust():
-            player.add_balance(500)
+            player.add_balance()
             render_text("Dealer busts, you win!")
             render_all()
             pygame.display.flip()
+            pygame.time.delay(500)
             hand_over = True
         else:
             # Compare dealer's and player's hand
@@ -179,40 +191,54 @@ def play(button, hand_over, card_deck):
             player_total = player.get_count()
 
             if dealer_total > player_total:
-                player.subtract_balance(500)
+                player.subtract_balance()
                 render_text("Dealer wins!")
                 pygame.display.flip()
-                pygame.time.delay(1000)
+                pygame.time.delay(500)
             elif dealer_total < player_total:
-                player.add_balance(500)
+                player.add_balance()
                 render_text("Player wins!")
                 pygame.display.flip()
-                pygame.time.delay(1000)
+                pygame.time.delay(500)
             else:
                 render_text("It's a tie!")
                 pygame.display.flip()
-                pygame.time.delay(1000)
+                pygame.time.delay(500)
 
             hand_over = True
 
     # Double button (Player doubles their bet and draws one last card)
     elif button == double_button:
-        player.set_bet(500)
+        player.double()
         draw_card(player_hand, player)
         render_all()  # Redraw the entire screen after doubling
 
         if player.check_bust():
-            player.subtract_balance(500)
+            player.subtract_balance()
             render_text("Player busts, you lose!")
             hand_over = True
         else:
             play(stand_button, hand_over, card_deck)  # Player stands after doubling
+            
+            
+    elif button == increase_bet_button:
+        if(player.check_bet_size(bet_size+100) == True):
+            bet_size += 100
+            player.set_bet(bet_size)
+        render_all()
+    elif button == decrease_bet_button:
+        if(bet_size >= 100):
+            bet_size -= 100
+            player.set_bet(bet_size)
+        render_all()
+        
 
     # If the hand is over, reset the game
     if hand_over:
         pygame.time.delay(2000)  # Wait 2 seconds before resetting
         reset_board()
         render_all()
+        
 
     
 # Game loop
