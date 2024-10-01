@@ -1,34 +1,29 @@
-Blackjack Game
-This is a simple Blackjack game implemented using Pygame. The game includes the standard actions of hit, stand, and double down, making it easy for anyone to jump in and play.
-
+ <br /> <div align="center"><strong>Blackjack Game</strong></div> <div align="center">A simple Blackjack game with Hit, Stand, and Double options, built using Pygame</div> <br /> <div align="center"> <!-- Python Version --> <a href="https://www.python.org/downloads/"> <img src="https://img.shields.io/badge/Python-3.x-blue.svg" alt="Python Version" /> </a> <!-- Pygame Dependency --> <a href="https://www.pygame.org/wiki/GettingStarted"> <img src="https://img.shields.io/badge/Pygame-2.x-green.svg" alt="Pygame Version" /> </a> <!-- License --> <a href="#license"> <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg" alt="MIT License" /> </a> </div> <br /> <div align="center"> <sub>Created by <a href="https://github.com/liyuxiao2">Liyu</a></sub> </div>
 Features
-Hit: Draw another card.
-Stand: Keep your current hand and end your turn.
-Double: Double your bet and receive exactly one more card.
+<dl> <dt>Hit</dt> <dd>Draw another card to increase your hand value.</dd> <dt>Stand</dt> <dd>Keep your current hand and let the dealer play.</dd> <dt>Double</dt> <dd>Double your bet and receive exactly one more card.</dd> </dl>
 Requirements
-To run this game, you'll need to install the following:
-
 Python 3.x
-Pygame library
+Pygame 2.x
 You can install Pygame using pip:
 
 bash
 Copy code
 pip install pygame
 How to Run
-Clone or download the repository to your local machine.
-Open a terminal and navigate to the game directory.
+Clone or download the repository.
+Navigate to the game directory in your terminal.
 Run the game using:
 bash
 Copy code
 python blackjack.py
 How to Play
-At the start of the game, both the dealer and the player are dealt two cards.
-The player has three options:
-Hit: Request an additional card.
-Stand: End your turn and let the dealer play.
-Double: Double your bet and receive one more card before your turn ends.
-The objective is to have a hand total as close to 21 as possible without going over. If you go over 21, you bust and lose the round.
-After the player ends their turn, the dealer will automatically play by drawing cards according to the standard Blackjack rules.
-The player wins by having a higher total than the dealer without exceeding 21.
-Good luck, and have fun!
+Both the dealer and the player start with two cards.
+Choose one of the three actions:
+Hit: Draw an additional card.
+Stand: Keep your current hand and let the dealer play.
+Double: Double your bet and receive one more card.
+The goal is to get as close to 21 as possible without going over. If your hand exceeds 21, you lose the round.
+After the player ends their turn, the dealer will play according to Blackjack rules.
+You win by having a higher hand total than the dealer without busting (going over 21).
+License
+This project is licensed under the MIT License. Feel free to modify and distribute the code as you like.
