@@ -1,8 +1,5 @@
 import pygame
-import time
 from Actors.functions.load_bg_image import set_screen_to_image
-from Actors.functions.load_images import load_images
-from Actors.cards import Card  # Ensure this import is correct
 from Actors.button import Button
 from Actors.player import Player
 from Actors.dealer import Dealer
@@ -12,7 +9,8 @@ from Actors.functions.shuffle_deck import shuffle_deck
 pygame.init()
 
 # Initialize the font for the game 
-game_font = pygame.font.Font(None, 55)
+game_font = pygame.font.Font('/Users/liyuxiao/Documents/CS/SideProjects/BlackJack/src/Assets/game_font.ttf', 20)
+
 
 # Set the dimensions of the screen
 screen_width = 800
@@ -26,19 +24,20 @@ set_screen_to_image(screen, bg)
 # Set the title of the window
 pygame.display.set_caption("BlackJack")
 
-# Create a clock object to control the frame rate
-clock = pygame.time.Clock()
+time_interval = 200
 
 # Make the card_deck 
 card_deck = shuffle_deck()
 
 # The buttons for the blackjack game
+big_button_img = "/Users/liyuxiao/Documents/CS/SideProjects/BlackJack/src/Assets/bigButton.png"
+small_button_img = "/Users/liyuxiao/Documents/CS/SideProjects/BlackJack/src/Assets/smallButton.png"
 box_size = 75
-draw_button = Button("hit", box_size, box_size, 150, 100, "comicsans", (255, 255, 255), (0, 0, 0), (100, 100, 100))
-stand_button = Button("stand", box_size, box_size, 150, 200, "comicsans", (255, 255, 255), (0, 0, 0), (100, 100, 100))
-double_button = Button("double", box_size, box_size, 150, 300, "comicsans", (255, 255, 255), (0, 0, 0), (100, 100, 100))
-increase_bet_button = Button("raise 100", box_size+50, box_size, 100, 400, "comicsans", (255, 255, 255), (0, 0, 0), (100, 100, 100))
-decrease_bet_button = Button("lower 100", box_size+50, box_size, 250, 400, "comicsans", (255, 255, 255), (0, 0, 0), (100, 100, 100))
+draw_button = Button("hit", box_size, box_size, 150, 100, game_font, (255, 255, 255), (0, 0, 0), (100, 100, 100), big_button_img )
+stand_button = Button("stand", box_size, box_size, 150, 200, game_font, (255, 255, 255), (0, 0, 0), (100, 100, 100), big_button_img)
+double_button = Button("double", box_size, box_size, 150, 300, game_font, (255, 255, 255), (0, 0, 0), (100, 100, 100), big_button_img)
+increase_bet_button = Button("+ 100", box_size+50, box_size, 100, 400, game_font, (255, 255, 255), (0, 0, 0), (100, 100, 100), big_button_img)
+decrease_bet_button = Button("- 100", box_size+50, box_size, 250, 400, game_font, (255, 255, 255), (0, 0, 0), (100, 100, 100), big_button_img)
 
 button_group = [draw_button, stand_button, double_button, increase_bet_button, decrease_bet_button]
  
@@ -55,10 +54,61 @@ player_hand = []
 dealer_hand = []
 hand_over = False
 
+
+def stand():
+    # Reveal the dealer's hidden card
+        show_hidden_card()
+        render_all()
+        pygame.time.delay(time_interval)
+
+        # Dealer draws cards until reaching 17 or more
+        while dealer.check_below_17():
+            draw_card(dealer_hand, dealer)
+            render_all()
+            pygame.time.delay(time_interval)  # Pause between each dealer card draw
+
+        # Dealer's hand is now fully revealed
+        if dealer.check_bust():
+            player.add_balance()
+            render_text("Dealer busts, you win!")
+            render_all()
+            pygame.display.flip()
+            pygame.time.delay(time_interval)
+        else:
+            # Compare dealer's and player's hand
+            dealer_total = dealer.get_count()
+            player_total = player.get_count()
+
+            if dealer_total > player_total:
+                player.subtract_balance()
+                render_text("Dealer wins!")
+                pygame.display.flip()
+                pygame.time.delay(time_interval)
+            elif dealer_total < player_total:
+                player.add_balance()
+                render_text("Player wins!")
+                pygame.display.flip()
+                pygame.time.delay(time_interval)
+            else:
+                render_text("It's a tie!")
+                pygame.display.flip()
+                pygame.time.delay(time_interval)
+                
+def draw():
+    draw_card(player_hand, player)
+    render_all()  # Redraw the entire screen after a hit
+    pygame.time.delay(time_interval)  # Pause for time_interval ms after drawing a card
+
+    # Check if player busted
+    if player.check_bust():
+        player.subtract_balance()
+        render_text("Player busts, you lose!")
+        hand_over = True
+                        
 def adjust_for_aces(user):
     """Adjust the value of Aces in hand if the total exceeds 21."""
     # While the count is above 21 and there's an Ace treated as 11, reduce its value to 1
-    while user.get_count() > 21 and user.get_ace_count() > 0:
+    while user.get_count() > 21 and user.get_ace_count() > 1:
         user.adjust_for_ace()  # This method should reduce an Ace value from 11 to 1
 
 def draw_card(deck_to_add_to, user, face_down = False):
@@ -122,6 +172,9 @@ def render_all():
     # Update the display
     pygame.display.flip()
 
+
+
+
 #gives the starting hand for both dealer and player
 def start():
     for i in range(2):
@@ -154,71 +207,17 @@ def play(button, hand_over, card_deck):
 
     # Hit button (Player draws a card)
     if button == draw_button:
-        draw_card(player_hand, player)
-        render_all()  # Redraw the entire screen after a hit
-        pygame.time.delay(500)  # Pause for 500 ms after drawing a card
-
-        # Check if player busted
-        if player.check_bust():
-            player.subtract_balance()
-            render_text("Player busts, you lose!")
-            hand_over = True
-
+        draw()
     # Stand button (Player stands, dealer reveals cards)
     elif button == stand_button:
-        # Reveal the dealer's hidden card
-        show_hidden_card()
-        render_all()
-        pygame.time.delay(500)
-
-        # Dealer draws cards until reaching 17 or more
-        while dealer.check_below_17():
-            draw_card(dealer_hand, dealer)
-            render_all()
-            pygame.time.delay(500)  # Pause between each dealer card draw
-
-        # Dealer's hand is now fully revealed
-        if dealer.check_bust():
-            player.add_balance()
-            render_text("Dealer busts, you win!")
-            render_all()
-            pygame.display.flip()
-            pygame.time.delay(500)
-            hand_over = True
-        else:
-            # Compare dealer's and player's hand
-            dealer_total = dealer.get_count()
-            player_total = player.get_count()
-
-            if dealer_total > player_total:
-                player.subtract_balance()
-                render_text("Dealer wins!")
-                pygame.display.flip()
-                pygame.time.delay(500)
-            elif dealer_total < player_total:
-                player.add_balance()
-                render_text("Player wins!")
-                pygame.display.flip()
-                pygame.time.delay(500)
-            else:
-                render_text("It's a tie!")
-                pygame.display.flip()
-                pygame.time.delay(500)
-
-            hand_over = True
-
+        stand()
+        hand_over = True
     # Double button (Player doubles their bet and draws one last card)
     elif button == double_button:
         player.double()
-        draw_card(player_hand, player)
-        render_all()  # Redraw the entire screen after doubling
-
-        if player.check_bust():
-            player.subtract_balance()
-            render_text("Player busts, you lose!")
-            hand_over = True
-        else:
-            play(stand_button, hand_over, card_deck)  # Player stands after doubling
+        draw()
+        stand()
+        hand_over = True
             
             
     elif button == increase_bet_button:

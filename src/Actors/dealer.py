@@ -35,8 +35,12 @@ class Dealer():
         self.ace_count += 1
     
     def adjust_for_ace(self):
-        while self.get_ace_count() > 1:
-            self.add_count(-10)
-        return self.count
+        """Adjust the value of Aces in hand if the total exceeds 21."""
+        # Check each Ace in the hand, reducing the value from 11 to 1 if the count exceeds 21.
+        if self.count > 21 and self.ace_count > 0:
+            while self.count > 21 and self.ace_count > 0:
+                self.count -= 10  # Adjust Ace value from 11 to 1
+                self.ace_count -= 1  # Decrement the Ace count
+
     
     
